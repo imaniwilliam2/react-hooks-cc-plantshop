@@ -47,6 +47,43 @@ function PlantPage() {
   }
 
 
+ 
+  // Delete Plants from Display and Server
+  function deletePlant(id) {
+    fetch(`http://localhost:6001/plants/${id}`, {
+      method: "DELETE"
+    })
+    .then(res => {
+      if(res.ok){
+        setPlants(plants => plants.filter(plant => {
+          return plant.id !== id
+        }))
+      } else {
+        alert("Error unable to delete plant!")
+      }
+    })
+  }
+
+
+  function updatePlantPrice(formData, id) {
+
+    fetch(`http://localhost:6001/plants/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+      body: JSON.stringify(formData)
+    })
+    .then(res => res.json())
+    .then(updatedPlant => setPlants(plants => plants.map(plant => {
+      if (plant.id === updatedPlant.id){
+        return updatedPlant
+      } else {
+        return plant 
+      }
+    })))
+  }
 
 
 
@@ -54,7 +91,7 @@ function PlantPage() {
     <main>
       <NewPlantForm addPlant={addPlant} />
       <Search searchPlant={searchPlant} updateSearchPlant={updateSearchPlant}/>
-      <PlantList plants={filteredPlants}/>
+      <PlantList plants={filteredPlants} deletePlant={deletePlant} updatePlantPrice={updatePlantPrice}/>
     </main>
   );
 }
